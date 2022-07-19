@@ -99,3 +99,6 @@ ENV/
 
 # mypy
 .mypy_cache/
+junk.json
+trial.py
+templates/test.html

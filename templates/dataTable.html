@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+<!-- transferrable variables = Title, keys, rows -->
+{% block title %} {{Title}} {% endblock %}
+
+{% block body %}
+
+<h1><span class="badge badge-secondary">{{Title}}</span></h1>
+<table class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        {% for key in keys %}
+        <th scope="col">{{key}}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+    {% for rowN in range(rows|length) %}
+      <tr>
+        <th scope="row">{{rowN+1}}</th>
+        {% for key in keys %}
+        <td>{{rows[rowN][key]}}</td>
+        {% endfor %}
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock %}

@@ -17,3 +17,5 @@ lint = 'flake8 .'
 
 [requires]
 python_version = "3.7"
+
+export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/14/bin
