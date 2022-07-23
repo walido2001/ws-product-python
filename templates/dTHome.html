@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Data Tables{% endblock %}
+
+{% block body %}
+
+  <div class="container-fluid">
+    <ul class="nav">
+        <li class="nav-item">
+            <a class="nav-link" href="/dataTable/events/hourly">Hourly Events</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link disabled" href="/dataTable/events/daily">Daily Events</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link disabled" href="/dataTable/stats/hourly">Hourly Stats</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link disabled" href="/dataTable/stats/daily">Daily Stats</a>
+        </li>
+    </ul>
+  </div>
+  {% block output %}{% endblock %}
+{% endblock %}

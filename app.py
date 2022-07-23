@@ -1,5 +1,6 @@
 import os
 import json
+from pydoc import render_doc
 
 from flask import Flask, jsonify, render_template
 import sqlalchemy as sa
@@ -21,17 +22,63 @@ engine = sa.create_engine(SQL_URI)
 
 @app.route('/')
 def index():
-    return 'Welcome to EQ Works 😎'
+    return render_template("home.html")
 
+@app.route('/dTHome')
+def dTHome():
+    return render_template("dTHome.html")
 
-@app.route('/events/hourly')
-def events_hourly():
-    return query_helper('''
+@app.route('/dataTable/<path:section>')
+def dataTable(section):
+
+    data = None
+
+    if section == "events/hourly":
+        data = '''
         SELECT date, hour, events
         FROM public.hourly_events
         ORDER BY date, hour
         LIMIT 168;
-    ''')
+    '''
+    elif section == "events/daily":
+            data = '''
+        SELECT date, SUM(events) AS events
+        FROM public.hourly_events
+        GROUP BY date
+        ORDER BY date
+        LIMIT 7;
+    '''
+    elif section == "stats/hourly":
+        data = '''
+        SELECT date, hour, impressions, clicks, revenue
+        FROM public.hourly_stats
+        ORDER BY date, hour
+        LIMIT 168;
+    '''
+    elif section == "stats/daily":
+        data = '''
+        SELECT date,
+            SUM(impressions) AS impressions,
+            SUM(clicks) AS clicks,
+            SUM(revenue) AS revenue
+        FROM public.hourly_stats
+        GROUP BY date
+        ORDER BY date
+        LIMIT 7;
+    '''
+
+    data = query_helper_modified(data)
+    keys = [key for key in data[0].keys()]
+    print(keys)
+    return render_template("dataTable.html", Title=section, keys=keys, rows=data)
+# @app.route('/events/hourly')
+# def events_hourly():
+#     return query_helper('''
+#         SELECT date, hour, events
+#         FROM public.hourly_events
+#         ORDER BY date, hour
+#         LIMIT 168;
+#     ''')
 
 @app.route('/events/hourly/dataTable')
 def events_hourly_dataTable():
@@ -46,15 +93,15 @@ def events_hourly_dataTable():
 
     return render_template("dataTable.html", Title="Hourly Events DataTable", keys=keys, rows=data)
 
-@app.route('/events/daily')
-def events_daily():
-    return query_helper('''
-        SELECT date, SUM(events) AS events
-        FROM public.hourly_events
-        GROUP BY date
-        ORDER BY date
-        LIMIT 7;
-    ''')
+# @app.route('/events/daily')
+# def events_daily():
+#     return query_helper('''
+#         SELECT date, SUM(events) AS events
+#         FROM public.hourly_events
+#         GROUP BY date
+#         ORDER BY date
+#         LIMIT 7;
+#     ''')
 
 @app.route('/events/daily/dataTable')
 def events_daily_dataTable():
@@ -70,14 +117,14 @@ def events_daily_dataTable():
 
     return render_template("dataTable.html", Title="Daily Events DataTable", keys=keys, rows=data)
 
-@app.route('/stats/hourly')
-def stats_hourly():
-    return query_helper('''
-        SELECT date, hour, impressions, clicks, revenue
-        FROM public.hourly_stats
-        ORDER BY date, hour
-        LIMIT 168;
-    ''')
+# @app.route('/stats/hourly')
+# def stats_hourly():
+#     return query_helper('''
+#         SELECT date, hour, impressions, clicks, revenue
+#         FROM public.hourly_stats
+#         ORDER BY date, hour
+#         LIMIT 168;
+#     ''')
 
 @app.route('/stats/hourly/dataTable')
 def stats_hourly_dataTable():
